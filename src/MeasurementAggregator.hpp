@@ -1,3 +1,4 @@
+#pragma once
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -26,13 +27,13 @@ public:
     * 
     * @return uint16_t 
     */
-    uint16_t getCO2Value();
+    int32_t getCO2Value();
     /**
      * @brief get TVOC value
      * 
      * @return uint16_t 
      */
-    uint16_t getTVOCValue();
+    int32_t getTVOCValue();
 
     /**
     * @brief Get the Temperature in C
@@ -58,6 +59,13 @@ public:
      * @return float 
      */
     float getHeightApprox();
+
+    /**
+    * @brief print all values to serial monitor
+    * 
+    * @param easyRead print a description every time, perfect for good readability
+    */
+    void printToSerial(bool easyRead = true);
 
 private:
     bool initCCS811();

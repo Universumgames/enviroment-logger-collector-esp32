@@ -37,22 +37,22 @@ void MeasurementAggregator::loop()
         airQualitySensor->readAlgorithmResults();
 }
 
-uint16_t MeasurementAggregator::getCO2Value()
+int32_t MeasurementAggregator::getCO2Value()
 {
     if (airSensorActive)
     {
         return airQualitySensor->getCO2();
     }
     else
-        return 400;
+        return -1;
 }
 
-uint16_t MeasurementAggregator::getTVOCValue()
+int32_t MeasurementAggregator::getTVOCValue()
 {
     if (airSensorActive)
         return airQualitySensor->getTVOC();
     else
-        return 0;
+        return -1;
 }
 
 float MeasurementAggregator::getTemperature()
@@ -60,7 +60,7 @@ float MeasurementAggregator::getTemperature()
     if (bmeActive)
         return bme->readTemperature();
     else
-        return 20.0F;
+        return -500.0F;
 }
 
 float MeasurementAggregator::gethPaPressure()
@@ -68,7 +68,7 @@ float MeasurementAggregator::gethPaPressure()
     if (bmeActive)
         return bme->readPressure() / 100.0F;
     else
-        return 1000.0F;
+        return -1.0F;
 }
 
 float MeasurementAggregator::getHumidity()
@@ -76,7 +76,7 @@ float MeasurementAggregator::getHumidity()
     if (bmeActive)
         return bme->readHumidity();
     else
-        return 0;
+        return -1;
 }
 
 float MeasurementAggregator::getHeightApprox()
@@ -84,5 +84,24 @@ float MeasurementAggregator::getHeightApprox()
     if (bmeActive)
         return bme->readAltitude(SEALEVELPRESSURE_HPA);
     else
-        return 0;
+        return -infinityf();
+}
+
+void MeasurementAggregator::printToSerial(bool easyRead)
+{
+    if (easyRead)
+    {
+        Serial.print(getHumidity());
+        Serial.print("%, ");
+        Serial.print(getTemperature());
+        Serial.print("°C, ");
+        Serial.print(gethPaPressure());
+        Serial.print(" hPa, ");
+        Serial.print(getCO2Value());
+        Serial.print(" CO2, ");
+        Serial.print(getTVOCValue());
+        Serial.print(" TVOC, ");
+        Serial.print(getHeightApprox());
+        Serial.println(" m");
+    }
 }

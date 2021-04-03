@@ -5,6 +5,6 @@
 
 #define UPLINK_SERVER_ADDRESS "raspi.universum.net" //(my own local dns entry for an raspberry pi)
 
-#define ILI9341_DRIVER //Large Display (that i've had on hand)
-                       //#define ST7735_DRIVER //smaller display (that i've had on hand)
-                       //#define noDisplay
+#define ILI9341_DRIVER //Large Display (that i've had on hand) \
+    //#define ST7735_DRIVER //smaller display (that i've had on hand)
+//#define noDisplay
