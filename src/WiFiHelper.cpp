@@ -17,8 +17,10 @@ void connectWiFi()
         while (WiFi.status() != WL_CONNECTED)
         {
             delay(500);
+#ifndef WIFI_SSID
             Serial.print(".");
             Serial.println(WiFi.smartConfigDone());
+#endif
             tries++;
             if (tries > 20)
                 ESP.restart();
