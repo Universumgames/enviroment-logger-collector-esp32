@@ -9,9 +9,9 @@
 #include <User_Setup.h>
 #include <ArduinoJson.h>
 
-String server = "http://192.168.178.53:8085/";
 String uuidWiFi = WiFi.macAddress();
-String envPostURI = "env/iot";
+
+int connectionErrorCount = 0;
 
 MeasurementAggregator aggregator;
 
@@ -49,7 +49,7 @@ String postToServer()
   {
     HTTPClient http;
 
-    String url = server + envPostURI + "/" + uuidWiFi + "/?humidity=" + String(aggregator.getHumidity()) + "&temperature=" + String(aggregator.getTemperature()) + "&pressure=" + String(aggregator.gethPaPressure()) + "&co2=" + String(aggregator.getCO2Value()) + "&tvoc=" + String(aggregator.getTVOCValue()) + "&heightapprox=" + String(aggregator.getHeightApprox());
+    String url = String(UPLINK_SERVER_ADDRESS) + String(POST_ENDPOINT) + "/" + uuidWiFi + "/?humidity=" + String(aggregator.getHumidity()) + "&temperature=" + String(aggregator.getTemperature()) + "&pressure=" + String(aggregator.gethPaPressure()) + "&co2=" + String(aggregator.getCO2Value()) + "&tvoc=" + String(aggregator.getTVOCValue()) + "&heightapprox=" + String(aggregator.getHeightApprox());
 
     http.begin(url.c_str());
     int response = http.POST("");
@@ -82,9 +82,13 @@ String postToServer()
   {
     Serial.println("WiFi Disconnected");
   }
+  connectionErrorCount++;
+  if (connectionErrorCount >= 5)
+    ESP.restart();
   return "";
 }
 
+#ifndef noDisplay
 void redrawAll()
 {
   tft.fillScreen(TFT_BLACK);
@@ -100,6 +104,7 @@ void redrawAll()
   tvoc.drawAllNew();
   height.drawAllNew();
 }
+#endif
 
 void setup()
 {
