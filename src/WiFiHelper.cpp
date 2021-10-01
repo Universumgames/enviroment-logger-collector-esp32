@@ -4,15 +4,21 @@ void connectWiFi()
 {
     while (WiFi.status() != WL_CONNECTED)
     {
-        WiFi.mode(WIFI_AP_STA);
+        Serial.println("Initialising Wifi config");
+        WiFi.mode(WIFI_STA);
+        WiFi.enableIpV6();
+        WiFi.disconnect();
+        WiFi.setAutoReconnect(true);
         delay(500);
 
 #ifndef WIFI_SSID
         WiFi.beginSmartConfig();
 #else
+        Serial.println("Setting credentials");
         WiFi.begin(WIFI_SSID, WIFI_PWD);
 #endif
 
+        Serial.println("Waiting for connection");
         int tries = 0;
         while (WiFi.status() != WL_CONNECTED)
         {
@@ -23,7 +29,10 @@ void connectWiFi()
 #endif
             tries++;
             if (tries > 20)
+            {
+                Serial.println("Could not establish connection, restarting...");
                 ESP.restart();
+            }
         }
     }
 

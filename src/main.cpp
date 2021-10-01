@@ -113,6 +113,7 @@ void setup()
   aggregator.init();
 
 #ifndef noDisplay
+  Serial.println("Init Display");
   tft.init();
   tft.setRotation(3);
 #ifdef ILI9341_DRIVER
@@ -123,7 +124,9 @@ void setup()
   error.updateString("WiFi not connected yet");
 #endif
 
+  WiFi.setHostname("env-logger-esp");
   connectWiFi();
+
 #ifndef noDisplay
   error.clearAll();
 #endif
