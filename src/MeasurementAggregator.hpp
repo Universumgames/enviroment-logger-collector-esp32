@@ -12,59 +12,59 @@ public:
     MeasurementAggregator();
     /**
      * @brief Initializes all measuring components
-     * 
+     *
      * @return Returns if initialisation of all components was successfull
      */
     bool init();
     /**
      * @brief run your loop function before read values to get newest data
-     * 
+     *
      */
     void loop();
 
     /**
-    * @brief get CO2 value
-    * 
-    * @return uint16_t 
-    */
+     * @brief get CO2 value
+     *
+     * @return uint16_t
+     */
     int32_t getCO2Value();
     /**
      * @brief get TVOC value
-     * 
-     * @return uint16_t 
+     *
+     * @return uint16_t
      */
     int32_t getTVOCValue();
 
     /**
-    * @brief Get the Temperature in C
-    * 
-    * @return float 
-    */
+     * @brief Get the Temperature in C
+     *
+     * @return float
+     */
     float getTemperature();
     /**
      * @brief Get the pressure hPa
-     * 
-     * @return float 
+     *
+     * @return float
      */
     float gethPaPressure();
     /**
      * @brief Get the Humidity in %
-     * 
-     * @return float 
+     *
+     * @return float
      */
     float getHumidity();
     /**
      * @brief Get a Height Approximation
-     * 
-     * @return float 
+     *
+     * @return float
      */
     float getHeightApprox();
 
     /**
-    * @brief print all values to serial monitor
-    * 
-    * @param easyRead print a description every time, perfect for good readability
-    */
+     * @brief print all values to serial monitor
+     *
+     * @param easyRead print a description every time, perfect for good readability
+     */
     void printToSerial(bool easyRead = true);
 
 private:

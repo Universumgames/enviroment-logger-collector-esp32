@@ -13,6 +13,9 @@ String uuidWiFi = WiFi.macAddress();
 
 int connectionErrorCount = 0;
 
+WiFiClient client;
+HTTPClient http;
+
 MeasurementAggregator aggregator;
 
 #ifndef noDisplay
@@ -43,24 +46,29 @@ int tftHeight = 0;
 int tftWidth = 0;
 #endif
 
+void connectClient()
+{
+  client.connect(UPLINK_SERVER_ADDRESS, UPLINK_SERVER_PORT);
+  http.setReuse(true);
+}
+
 String postToServer()
 {
   if (connectedWiFi())
   {
-    HTTPClient http;
+    if (!client.connected())
+      connectClient();
+    String path = String(POST_ENDPOINT) + "/" + uuidWiFi + "/?humidity=" + String(aggregator.getHumidity()) + "&temperature=" + String(aggregator.getTemperature()) + "&pressure=" + String(aggregator.gethPaPressure()) + "&co2=" + String(aggregator.getCO2Value()) + "&tvoc=" + String(aggregator.getTVOCValue()) + "&heightapprox=" + String(aggregator.getHeightApprox());
 
-    String url = String(UPLINK_SERVER_ADDRESS) + String(POST_ENDPOINT) + "/" + uuidWiFi + "/?humidity=" + String(aggregator.getHumidity()) + "&temperature=" + String(aggregator.getTemperature()) + "&pressure=" + String(aggregator.gethPaPressure()) + "&co2=" + String(aggregator.getCO2Value()) + "&tvoc=" + String(aggregator.getTVOCValue()) + "&heightapprox=" + String(aggregator.getHeightApprox());
-
-    http.begin(url.c_str());
+    http.begin(client, String(UPLINK_SERVER_ADDRESS), (uint16_t)UPLINK_SERVER_PORT, path, false);
     int response = http.POST("");
     if (response > 0)
     {
-      //Serial.print("HTTP Response code: ");
-      //Serial.println(response);
+      // Serial.print("HTTP Response code: ");
+      // Serial.println(response);
       String responseString = http.getString();
-      http.end();
       return responseString;
-      //aSerial.println(payload);
+      // aSerial.println(payload);
     }
     else
     {
@@ -130,18 +138,20 @@ void setup()
 #ifndef noDisplay
   error.clearAll();
 #endif
+
+  connectClient();
 }
 
 void loop()
 {
   aggregator.loop();
-  //aggregator.printToSerial();
+  // aggregator.printToSerial();
   String json = postToServer();
 
 #ifndef noDisplay
   tft.setTextColor(TFT_WHITE);
 
-  //update all values in tft
+  // update all values in tft
 
   temp.updateString((aggregator.getTemperature() > -500.0F) ? String(aggregator.getTemperature()) + "C" : "Na");
   delay(50);
@@ -177,7 +187,7 @@ void loop()
       continue;
     DeviceSet *device = nullptr;
     int index = 0;
-    //search right Device
+    // search right Device
     for (int j = 0; j < numDevices; j++)
     {
       if (deviceList[j].uuid == uuid)
@@ -187,7 +197,7 @@ void loop()
       }
     }
 
-    //if device not exist
+    // if device not exist
     if (device == nullptr)
     {
       device = new DeviceSet();

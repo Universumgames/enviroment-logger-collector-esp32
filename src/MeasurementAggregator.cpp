@@ -6,13 +6,14 @@ bool MeasurementAggregator::init()
 {
     airSensorActive = initCCS811();
     bmeActive = initMBE280();
+    return airSensorActive && bmeActive;
 }
 
 bool MeasurementAggregator::initCCS811()
 {
     Wire.begin();
     airQualitySensor = new CCS811(CCS811_ADDR);
-    CCS811Core::CCS811_Status_e returnCode = airQualitySensor->beginWithStatus(Wire); //Pass Wire1 into the library
+    CCS811Core::CCS811_Status_e returnCode = airQualitySensor->beginWithStatus(Wire); // Pass Wire1 into the library
     Serial.print("CCS811 begin exited with: ");
     Serial.println(airQualitySensor->statusString(returnCode));
     return returnCode == CCS811Core::CCS811_Status_e::CCS811_Stat_SUCCESS;
@@ -21,7 +22,7 @@ bool MeasurementAggregator::initCCS811()
 bool MeasurementAggregator::initMBE280()
 {
     bme = new Adafruit_BME280();
-    if (!bme->begin(0x76, &Wire))
+    if (!bme->begin(0x76))
     {
         Serial.println("Could not find a valid BME280 sensor, check wiring!");
         return false;
